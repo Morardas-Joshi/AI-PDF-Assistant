@@ -17,6 +17,9 @@ for page_number, page in enumerate(reader.pages, start=1):
 
     all_text += text + "\n"
 
-print("\n========== COMPLETE TEXT ==========\n")
+# Remove extra spaces at the beginning and end
+all_text = all_text.strip()
+
+print("\n========== CLEANED TEXT ==========\n")
 
 print(all_text)
