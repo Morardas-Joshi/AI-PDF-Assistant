@@ -11,6 +11,7 @@ Completed modules:
 - PDF text extraction service.
 - Text chunking service for retrieval-ready page citations.
 - Chroma vector repository for chunk persistence and semantic search.
+- Document indexing pipeline from stored PDF to vectorized chunks.
 
 ## Architecture
 
@@ -110,6 +111,12 @@ Upload one or more PDFs:
 ```bash
 curl -X POST http://localhost:8000/api/v1/documents/upload \
   -F "files=@docs/samples/frontend.pdf;type=application/pdf"
+```
+
+Index an uploaded PDF:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/documents/<stored-filename>/index
 ```
 
 ## Screenshots

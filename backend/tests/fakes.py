@@ -1,5 +1,7 @@
 from langchain_core.embeddings import Embeddings
 
+from backend.app.schemas.chunk import TextChunk
+
 
 class DeterministicEmbeddings(Embeddings):
     def embed_documents(self, texts: list[str]) -> list[list[float]]:
@@ -15,3 +17,12 @@ class DeterministicEmbeddings(Embeddings):
             float(lowered.count("menu")),
             float(lowered.count("payment")),
         ]
+
+
+class InMemoryVectorRepository:
+    def __init__(self) -> None:
+        self.chunks: list[TextChunk] = []
+
+    def upsert_chunks(self, chunks: list[TextChunk]) -> int:
+        self.chunks.extend(chunks)
+        return len(chunks)
