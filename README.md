@@ -15,6 +15,7 @@ Completed modules:
 - Semantic search API with source-ready chunk citations.
 - RAG chat API with grounded answers and citations.
 - Streaming RAG chat API using server-sent events.
+- Document library API for listing and deleting uploaded PDFs.
 
 ## Architecture
 
@@ -114,6 +115,18 @@ Upload one or more PDFs:
 ```bash
 curl -X POST http://localhost:8000/api/v1/documents/upload \
   -F "files=@docs/samples/frontend.pdf;type=application/pdf"
+```
+
+List uploaded PDFs:
+
+```bash
+curl http://localhost:8000/api/v1/documents
+```
+
+Delete an uploaded PDF:
+
+```bash
+curl -X DELETE http://localhost:8000/api/v1/documents/<stored-filename>
 ```
 
 Index an uploaded PDF:

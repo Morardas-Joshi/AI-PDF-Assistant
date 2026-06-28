@@ -17,6 +17,21 @@ class DocumentUploadResult(BaseModel):
     documents: list[DocumentUploadResponse]
 
 
+class StoredDocument(BaseModel):
+    stored_filename: str
+    size_bytes: int = Field(ge=0)
+    modified_at: datetime
+
+
+class DocumentListResponse(BaseModel):
+    documents: list[StoredDocument]
+
+
+class DocumentDeleteResponse(BaseModel):
+    stored_filename: str
+    deleted: bool
+
+
 def build_document_response(
     *,
     document_id: str,
@@ -33,4 +48,3 @@ def build_document_response(
         size_bytes=size_bytes,
         uploaded_at=datetime.now(timezone.utc),
     )
-

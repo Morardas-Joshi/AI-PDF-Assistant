@@ -6,7 +6,7 @@ from langchain_ollama import OllamaEmbeddings
 
 from backend.app.config.settings import Settings, get_settings
 from backend.app.repositories.vector_store import ChromaVectorRepository
-from backend.app.schemas.document import DocumentUploadResult
+from backend.app.schemas.document import DocumentDeleteResponse, DocumentListResponse, DocumentUploadResult
 from backend.app.schemas.indexing import DocumentIndexResult
 from backend.app.services.document_indexer import DocumentIndexingService
 from backend.app.services.exceptions import DocumentProcessingError
@@ -54,6 +54,24 @@ async def upload_documents(
     for file in files:
         documents.append(await storage_service.save_upload(file))
     return DocumentUploadResult(documents=documents)
+
+
+@router.get("", response_model=DocumentListResponse)
+async def list_documents(
+    storage_service: Annotated[PDFStorageService, Depends(get_pdf_storage_service)],
+) -> DocumentListResponse:
+    return DocumentListResponse(documents=storage_service.list_documents())
+
+
+@router.delete("/{stored_filename}", response_model=DocumentDeleteResponse)
+async def delete_document(
+    stored_filename: str,
+    storage_service: Annotated[PDFStorageService, Depends(get_pdf_storage_service)],
+) -> DocumentDeleteResponse:
+    return DocumentDeleteResponse(
+        stored_filename=stored_filename,
+        deleted=storage_service.delete_document(stored_filename),
+    )
 
 
 @router.post(
