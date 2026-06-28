@@ -90,13 +90,21 @@ Expected result:
 
 ## Roadmap
 
-- Secure PDF upload API
 - PDF text extraction service
 - Multi-knowledge-base document model
 - ChromaDB repository layer
 - RAG chat endpoint with streaming responses
 - React SaaS dashboard and chat UI
 - Deployment guide and Docker Compose
+
+## API
+
+Upload one or more PDFs:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/documents/upload \
+  -F "files=@docs/samples/frontend.pdf;type=application/pdf"
+```
 
 ## Screenshots
 
