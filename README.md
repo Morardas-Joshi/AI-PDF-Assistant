@@ -13,6 +13,7 @@ Completed modules:
 - Chroma vector repository for chunk persistence and semantic search.
 - Document indexing pipeline from stored PDF to vectorized chunks.
 - Semantic search API with source-ready chunk citations.
+- RAG chat API with grounded answers and citations.
 
 ## Architecture
 
@@ -126,6 +127,14 @@ Search indexed PDFs:
 curl -X POST http://localhost:8000/api/v1/search \
   -H "Content-Type: application/json" \
   -d '{"query":"payment total","limit":5}'
+```
+
+Ask a grounded question:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/chat \
+  -H "Content-Type: application/json" \
+  -d '{"question":"What is the payment total?","limit":5}'
 ```
 
 ## Screenshots
