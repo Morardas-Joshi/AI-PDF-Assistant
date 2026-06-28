@@ -20,3 +20,7 @@ class ChatResponse(BaseModel):
     answer: str
     citations: list[ChatCitation]
 
+
+class ChatStreamEvent(BaseModel):
+    event: str
+    data: dict

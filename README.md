@@ -14,6 +14,7 @@ Completed modules:
 - Document indexing pipeline from stored PDF to vectorized chunks.
 - Semantic search API with source-ready chunk citations.
 - RAG chat API with grounded answers and citations.
+- Streaming RAG chat API using server-sent events.
 
 ## Architecture
 
@@ -133,6 +134,14 @@ Ask a grounded question:
 
 ```bash
 curl -X POST http://localhost:8000/api/v1/chat \
+  -H "Content-Type: application/json" \
+  -d '{"question":"What is the payment total?","limit":5}'
+```
+
+Stream a grounded answer:
+
+```bash
+curl -N -X POST http://localhost:8000/api/v1/chat/stream \
   -H "Content-Type: application/json" \
   -d '{"question":"What is the payment total?","limit":5}'
 ```

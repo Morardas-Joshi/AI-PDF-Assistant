@@ -18,6 +18,11 @@ class FakeChatModel:
         self.prompt = prompt
         return "The payment total appears in the invoice context."
 
+    def stream(self, prompt: str):
+        self.prompt = prompt
+        yield "The payment "
+        yield "total appears."
+
 
 def test_rag_chat_service_answers_with_citations():
     chunk = ChunkSearchResult(
@@ -55,3 +60,25 @@ def test_rag_chat_service_handles_no_context_without_calling_model():
     assert "could not find" in response.answer
     assert chat_model.prompt == ""
 
+
+def test_rag_chat_service_streams_citations_tokens_and_done():
+    chunk = ChunkSearchResult(
+        id="invoice.pdf:page-1:chunk-0",
+        document_name="invoice.pdf",
+        page_number=1,
+        chunk_index=0,
+        text="The invoice payment total is $42.",
+        score=0.12,
+    )
+    chat_model = FakeChatModel()
+    service = RAGChatService(
+        repository=StaticRetrievalRepository([chunk]),
+        chat_model=chat_model,
+    )
+
+    events = list(service.stream_answer(question="What is the payment total?", limit=1))
+
+    assert [event.event for event in events] == ["citations", "token", "token", "done"]
+    assert events[0].data["citations"][0]["document_name"] == "invoice.pdf"
+    assert events[1].data["text"] == "The payment "
+    assert "invoice payment total" in chat_model.prompt

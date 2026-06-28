@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from backend.app.schemas.chat import ChatCitation, ChatResponse
+from backend.app.schemas.chat import ChatCitation, ChatResponse, ChatStreamEvent
 from backend.app.schemas.chunk import ChunkSearchResult
 from backend.app.services.llm import ChatModel
 
@@ -45,6 +45,43 @@ class RAGChatService:
             ],
         )
 
+    def stream_answer(self, *, question: str, limit: int = 5):
+        normalized_question = question.strip()
+        chunks = self.repository.similarity_search(normalized_question, limit=limit)
+        citations = [
+            ChatCitation(
+                id=chunk.id,
+                document_name=chunk.document_name,
+                page_number=chunk.page_number,
+                chunk_index=chunk.chunk_index,
+                text=chunk.text,
+                score=chunk.score,
+            )
+            for chunk in chunks
+        ]
+
+        yield ChatStreamEvent(
+            event="citations",
+            data={
+                "question": normalized_question,
+                "citations": [citation.model_dump() for citation in citations],
+            },
+        )
+
+        if not chunks:
+            yield ChatStreamEvent(
+                event="token",
+                data={"text": "I could not find relevant information in the indexed PDFs."},
+            )
+            yield ChatStreamEvent(event="done", data={})
+            return
+
+        prompt = self._build_prompt(question=normalized_question, chunks=chunks)
+        for token in self.chat_model.stream(prompt):
+            yield ChatStreamEvent(event="token", data={"text": token})
+
+        yield ChatStreamEvent(event="done", data={})
+
     def _build_prompt(self, *, question: str, chunks: list[ChunkSearchResult]) -> str:
         context = "\n\n".join(
             (
@@ -67,4 +104,3 @@ Question:
 {question}
 
 Answer:"""
-
