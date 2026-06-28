@@ -6,10 +6,17 @@ reader = PdfReader(pdf_path)
 
 print(f"Total Pages: {len(reader.pages)}")
 
-first_page = reader.pages[0]
+all_text = ""
 
-text = first_page.extract_text()
+for page_number, page in enumerate(reader.pages, start=1):
+    text = page.extract_text()
 
-print("\nFirst Page:\n")
+    print(f"\n========== PAGE {page_number} ==========\n")
 
-print(text)
+    print(text)
+
+    all_text += text + "\n"
+
+print("\n========== COMPLETE TEXT ==========\n")
+
+print(all_text)
