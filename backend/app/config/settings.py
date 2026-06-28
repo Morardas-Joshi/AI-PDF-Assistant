@@ -13,7 +13,9 @@ class Settings(BaseSettings):
     debug: bool = Field(default=True, validation_alias="APP_DEBUG")
     api_prefix: str = "/api/v1"
 
-    backend_cors_origins: list[str] = Field(default_factory=lambda: ["http://localhost:5173"])
+    backend_cors_origins: list[str] = Field(
+        default_factory=lambda: ["http://localhost:5173", "http://127.0.0.1:5173"]
+    )
 
     upload_dir_name: str = "uploads"
     chroma_dir_name: str = "chroma_db"

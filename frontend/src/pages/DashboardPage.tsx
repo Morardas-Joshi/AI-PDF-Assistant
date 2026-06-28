@@ -1,14 +1,15 @@
 import { motion } from "framer-motion";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowUpRight, FileText, MessageSquareText, Search, ShieldCheck, UploadCloud, Zap } from "lucide-react";
+import { useState } from "react";
 
 import { Button } from "../components/ui/Button";
 import { Panel } from "../components/ui/Panel";
-
-const stats = [
-  { label: "Documents", value: "0", icon: FileText, accent: "text-emerald-700 dark:text-emerald-300" },
-  { label: "Indexed chunks", value: "0", icon: Search, accent: "text-cyan-700 dark:text-cyan-300" },
-  { label: "Conversations", value: "0", icon: MessageSquareText, accent: "text-amber-700 dark:text-amber-300" },
-];
+import { DocumentUploadPanel } from "../components/documents/DocumentUploadPanel";
+import { DocumentListPanel } from "../components/documents/DocumentListPanel";
+import { Toast } from "../components/feedback/Toast";
+import { deleteDocument, listDocuments, uploadDocuments } from "../services/documents";
+import { ApiError } from "../services/apiClient";
 
 const activity = [
   "Secure upload API online",
@@ -17,8 +18,49 @@ const activity = [
 ];
 
 export function DashboardPage() {
+  const queryClient = useQueryClient();
+  const [toast, setToast] = useState<{ message: string; tone: "success" | "error" } | null>(null);
+  const [deletingFilename, setDeletingFilename] = useState<string | undefined>();
+
+  const documentsQuery = useQuery({
+    queryKey: ["documents"],
+    queryFn: listDocuments,
+  });
+
+  const uploadMutation = useMutation({
+    mutationFn: uploadDocuments,
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ["documents"] });
+      setToast({ tone: "success", message: `${result.documents.length} PDF uploaded.` });
+    },
+    onError: (error) => {
+      setToast({ tone: "error", message: getErrorMessage(error) });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteDocument,
+    onMutate: (storedFilename) => setDeletingFilename(storedFilename),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["documents"] });
+      setToast({ tone: "success", message: "PDF deleted." });
+    },
+    onError: (error) => {
+      setToast({ tone: "error", message: getErrorMessage(error) });
+    },
+    onSettled: () => setDeletingFilename(undefined),
+  });
+
+  const documents = documentsQuery.data?.documents ?? [];
+  const stats = [
+    { label: "Documents", value: String(documents.length), icon: FileText, accent: "text-emerald-700 dark:text-emerald-300" },
+    { label: "Indexed chunks", value: "0", icon: Search, accent: "text-cyan-700 dark:text-cyan-300" },
+    { label: "Conversations", value: "0", icon: MessageSquareText, accent: "text-amber-700 dark:text-amber-300" },
+  ];
+
   return (
     <div className="mx-auto grid max-w-7xl gap-5">
+      {toast ? <Toast message={toast.message} tone={toast.tone} onClose={() => setToast(null)} /> : null}
       <motion.section
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -92,15 +134,22 @@ export function DashboardPage() {
       </section>
 
       <section className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
-        <Panel className="p-5">
-          <div className="rounded-lg border border-dashed border-stone-300 bg-stone-50 p-8 text-center dark:border-stone-700 dark:bg-stone-900/60">
-            <UploadCloud className="mx-auto text-emerald-700 dark:text-emerald-300" size={34} />
-            <h3 className="mt-4 text-lg font-semibold">Document dropzone</h3>
-            <p className="mt-2 text-sm text-stone-500 dark:text-stone-400">
-              The upload workflow will connect here in the next frontend module.
-            </p>
-          </div>
+        <DocumentUploadPanel isUploading={uploadMutation.isPending} onUpload={(files) => uploadMutation.mutate(files)} />
+        <DocumentListPanel
+          documents={documents}
+          isLoading={documentsQuery.isLoading}
+          deletingFilename={deletingFilename}
+          onDelete={(storedFilename) => deleteMutation.mutate(storedFilename)}
+        />
+      </section>
+
+      {documentsQuery.isError ? (
+        <Panel className="border-red-200 bg-red-50 p-4 text-sm text-red-900 dark:border-red-900 dark:bg-red-950 dark:text-red-100">
+          {getErrorMessage(documentsQuery.error)}
         </Panel>
+      ) : null}
+
+      <section>
         <Panel className="p-5">
           <div className="flex items-center justify-between">
             <div>
@@ -123,3 +172,10 @@ export function DashboardPage() {
   );
 }
 
+function getErrorMessage(error: unknown) {
+  if (error instanceof ApiError || error instanceof Error) {
+    return error.message;
+  }
+
+  return "Something went wrong.";
+}
