@@ -12,6 +12,7 @@ Completed modules:
 - Text chunking service for retrieval-ready page citations.
 - Chroma vector repository for chunk persistence and semantic search.
 - Document indexing pipeline from stored PDF to vectorized chunks.
+- Semantic search API with source-ready chunk citations.
 
 ## Architecture
 
@@ -117,6 +118,14 @@ Index an uploaded PDF:
 
 ```bash
 curl -X POST http://localhost:8000/api/v1/documents/<stored-filename>/index
+```
+
+Search indexed PDFs:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/search \
+  -H "Content-Type: application/json" \
+  -d '{"query":"payment total","limit":5}'
 ```
 
 ## Screenshots
