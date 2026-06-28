@@ -9,6 +9,7 @@ Completed modules:
 - Project structure cleanup with a backend-first architecture.
 - Secure PDF upload backend.
 - PDF text extraction service.
+- Text chunking service for retrieval-ready page citations.
 
 ## Architecture
 
@@ -88,6 +89,8 @@ Expected result:
 | `UPLOAD_DIR_NAME` | PDF upload storage directory |
 | `CHROMA_DIR_NAME` | Local vector database directory |
 | `MAX_UPLOAD_SIZE_MB` | Upload size limit |
+| `CHUNK_SIZE` | Target text chunk size used before embedding |
+| `CHUNK_OVERLAP` | Character overlap between adjacent chunks |
 | `OLLAMA_BASE_URL` | Local Ollama API URL |
 | `LLM_MODEL` | Chat model name |
 | `EMBEDDING_MODEL` | Embedding model name |

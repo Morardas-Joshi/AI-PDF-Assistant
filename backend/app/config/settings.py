@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     upload_dir_name: str = "uploads"
     chroma_dir_name: str = "chroma_db"
     max_upload_size_mb: int = Field(default=25, ge=1, le=250)
+    chunk_size: int = Field(default=1000, ge=100, le=8000)
+    chunk_overlap: int = Field(default=150, ge=0, le=2000)
 
     ollama_base_url: str = "http://localhost:11434"
     llm_model: str = "qwen3:4b"
