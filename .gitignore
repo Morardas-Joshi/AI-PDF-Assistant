@@ -2,4 +2,14 @@ venv/
 __pycache__/
 *.pyc
 .vscode/
+.env
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/chroma_db/*
+!backend/chroma_db/.gitkeep
+frontend/node_modules/
+frontend/dist/
     
