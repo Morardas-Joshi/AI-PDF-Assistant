@@ -4,7 +4,11 @@ A production-oriented AI PDF Assistant built with FastAPI, LangChain, Ollama, Ch
 
 ## Current Status
 
-Module 1 is complete: project structure cleanup with a backend-first architecture, typed configuration, health checks, request tracing, CORS, and tests.
+Completed modules:
+
+- Project structure cleanup with a backend-first architecture.
+- Secure PDF upload backend.
+- PDF text extraction service.
 
 ## Architecture
 
@@ -90,7 +94,6 @@ Expected result:
 
 ## Roadmap
 
-- PDF text extraction service
 - Multi-knowledge-base document model
 - ChromaDB repository layer
 - RAG chat endpoint with streaming responses
