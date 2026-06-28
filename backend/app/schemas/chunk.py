@@ -15,3 +15,11 @@ class ChunkedDocument(BaseModel):
     total_chunks: int = Field(ge=0)
     chunks: list[TextChunk]
 
+
+class ChunkSearchResult(BaseModel):
+    id: str
+    document_name: str
+    page_number: int = Field(ge=1)
+    chunk_index: int = Field(ge=0)
+    text: str
+    score: float | None = None

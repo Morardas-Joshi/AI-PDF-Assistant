@@ -10,6 +10,7 @@ Completed modules:
 - Secure PDF upload backend.
 - PDF text extraction service.
 - Text chunking service for retrieval-ready page citations.
+- Chroma vector repository for chunk persistence and semantic search.
 
 ## Architecture
 
@@ -98,7 +99,6 @@ Expected result:
 ## Roadmap
 
 - Multi-knowledge-base document model
-- ChromaDB repository layer
 - RAG chat endpoint with streaming responses
 - React SaaS dashboard and chat UI
 - Deployment guide and Docker Compose
