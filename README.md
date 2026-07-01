@@ -1,4 +1,4 @@
-# AI PDF Assistant
+# AI PDF Assistant (RAG)
 
 A production-oriented AI PDF Assistant built with FastAPI, LangChain, Ollama, ChromaDB, and a modern React frontend.
 
