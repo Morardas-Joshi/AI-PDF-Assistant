@@ -2,9 +2,7 @@
 
 A production-oriented AI PDF Assistant built with FastAPI, LangChain, Ollama, ChromaDB, and a modern React frontend.
 
-## Current Status
-
-Completed modules:
+## Implemented Features
 
 - Project structure cleanup with a backend-first architecture.
 - Secure PDF upload backend.
@@ -161,7 +159,7 @@ curl -N -X POST http://localhost:8000/api/v1/chat/stream \
 
 ## Screenshots
 
-Screenshots will be added after the frontend module is implemented.
+Coming soon...
 
 ## Troubleshooting
 
